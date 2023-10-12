@@ -50,8 +50,10 @@ class AutoRun:
         boy.x += boy.dir * 5
         if boy.x > 800:
             boy.dir = -1
+            boy.action = 0
         elif boy.x < 0:
             boy.dir = 1
+            boy.action = 1
         pass
 
     @staticmethod
