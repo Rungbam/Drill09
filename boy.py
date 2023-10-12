@@ -60,10 +60,12 @@ class Sleep:
     def enter(boy, e):
         boy.frame = 0
         print('고개숙이기')
+        pass
 
     @staticmethod
     def exit(boy, e):
         print('고개들기')
+        pass
 
     @staticmethod
     def do(boy):
@@ -89,7 +91,7 @@ class Idle:
             boy.action = 3
         boy.dir = 0
         boy.frame = 0
-        boy.start_time = get_time()
+        boy.wait_time = get_time()
         pass
 
     @staticmethod
@@ -99,7 +101,7 @@ class Idle:
     @staticmethod
     def do(boy):
         boy.frame = (boy.frame + 1) % 8
-        if get_time() - boy.start_time > 3.0:
+        if get_time() - boy.wait_time > 3.0:
             boy.state_machine.handle_event(('TIME_OUT', 0))
         print('Idle Do')
 
@@ -118,10 +120,6 @@ class StateMachine:
             Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle},
             Sleep: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, space_down: Idle}
         }
-        self.table = {
-            Sleep: {space_down: Idle},
-            Idle: {time_out: Sleep}
-        }
 
     def start(self):
         self.cur_state.enter(self.boy, ('START', 0))
@@ -130,7 +128,7 @@ class StateMachine:
         self.cur_state.do(self.boy)
 
     def handle_event(self, e):
-        for check_event, next_state in self.table[self.cur_state].items():
+        for check_event, next_state in self.transitions[self.cur_state].items():
             if check_event(e):
                 self.cur_state.exit(self.boy, e)
                 self.cur_state = next_state
